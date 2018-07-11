@@ -5,19 +5,15 @@ require 'csv'
 require 'active_record'
 require "sinatra/activerecord"
 require_relative 'models/model'
-
-
+require_relative 'modules/charges'
 
 module FamBusinessIntel
     class FamAWS
+      include Charges
 
     def initialize
-        
         @aws_key = ENV['AWS_KEY']
         @aws_secret_key = ENV['AWS_SECRET_KEY']
-
-        
-
     end
 
     def push_to_s3
@@ -29,7 +25,7 @@ module FamBusinessIntel
         file = 'test.csv'
         bucket = 'fambrands-business-intelligence'
         name = File.basename(file)
-        
+
         path = 'exports/MYTEST_funky.csv'
         #s3.bucket('fambrands-business-intelligence').object(path).upload_file('test.csv')
 
@@ -40,9 +36,17 @@ module FamBusinessIntel
     end
 
     def push_all_subscriptions
-        
+
         #Headers for CSV
-        column_header = ["subscription_id", "address_id", "customer_id", "created_at", "updated_at", "next_charge_scheduled_at", "cancelled_at", "product_title", "price", "quantity", "status", "shopify_product_id", "shopify_variant_id", "sku", "order_interval_unit", "charge_interval_unit", "order_day_of_month", "order_day_of_week", "raw_line_item_properties", "synced_at", "expire_after_specific_charges"]
+        column_header = [
+          "subscription_id", "address_id", "customer_id",
+          "created_at", "updated_at", "next_charge_scheduled_at",
+          "cancelled_at", "product_title", "price",
+          "quantity","status", "shopify_product_id",
+          "shopify_variant_id","sku", "order_interval_unit",
+          "charge_interval_unit","order_day_of_month", "order_day_of_week",
+          "raw_line_item_properties","synced_at", "expire_after_specific_charges"
+        ]
         #delete old file
         File.delete('subscriptions.csv') if File.exist?('subscriptions.csv')
         CSV.open('subscriptions.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
@@ -78,7 +82,7 @@ module FamBusinessIntel
             hdr << csv_data_out
 
         end
-        
+
         #end of csv part
         end
 
@@ -87,7 +91,7 @@ module FamBusinessIntel
             credentials: Aws::Credentials.new(@aws_key, @aws_secret_key)
          })
         s3 = Aws::S3::Resource.new(region: 'us-east-1')
-        
+
         path = 'exports/etl_subscriptions.csv'
         #Alternate method
         #s3.bucket('fambrands-business-intelligence').object(path).upload_file('subscriptions.csv')
@@ -95,7 +99,7 @@ module FamBusinessIntel
         file = 'subscriptions.csv'
         bucket = 'fambrands-business-intelligence'
         name = File.basename(file)
-        
+
         obj = s3.bucket(bucket).object(path)
         obj.upload_file(name)
 
@@ -128,7 +132,7 @@ module FamBusinessIntel
             credentials: Aws::Credentials.new(@aws_key, @aws_secret_key)
          })
         s3 = Aws::S3::Resource.new(region: 'us-east-1')
-        
+
         path = 'exports/etl_sub_line_items.csv'
         #Alternate method
         #s3.bucket('fambrands-business-intelligence').object(path).upload_file('subscriptions.csv')
@@ -136,7 +140,7 @@ module FamBusinessIntel
         file = 'sub_line_items.csv'
         bucket = 'fambrands-business-intelligence'
         name = File.basename(file)
-        
+
         obj = s3.bucket(bucket).object(path)
         obj.upload_file(name)
 
@@ -146,7 +150,7 @@ module FamBusinessIntel
 
         #Headers for CSV
         column_header = ["customer_id", "shopify_customer_id", "subscription_id", "charge_id", "reason", "skipped_to", "skip_status", "created_at", "updated_at"]
-        #delete old file
+        # delete old file
         File.delete('skip_reasons.csv') if File.exist?('skip_reasons.csv')
         CSV.open('skip_reasons.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
             column_header = nil
@@ -166,7 +170,7 @@ module FamBusinessIntel
             hdr << csv_data_out
 
         end
-        #end of CSV hdr
+        # end of CSV hdr
         end
 
         #push to S3
@@ -174,7 +178,7 @@ module FamBusinessIntel
             credentials: Aws::Credentials.new(@aws_key, @aws_secret_key)
          })
         s3 = Aws::S3::Resource.new(region: 'us-east-1')
-        
+
         path = 'exports/etl_skip_reasons.csv'
         #Alternate method
         #s3.bucket('fambrands-business-intelligence').object(path).upload_file('subscriptions.csv')
@@ -182,13 +186,11 @@ module FamBusinessIntel
         file = 'skip_reasons.csv'
         bucket = 'fambrands-business-intelligence'
         name = File.basename(file)
-        
+
         obj = s3.bucket(bucket).object(path)
         obj.upload_file(name)
-
-
     end
 
 
-    end
+  end
 end
