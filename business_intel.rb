@@ -5,11 +5,12 @@ require 'csv'
 require 'active_record'
 require "sinatra/activerecord"
 require_relative 'models/model'
-require_relative 'modules/charges'
+Dir["./modules/*.rb"].each {|file| require file }
 
 module FamBusinessIntel
     class FamAWS
       include Charges
+      include Customers
 
     def initialize
         @aws_key = ENV['AWS_KEY']

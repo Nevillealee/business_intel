@@ -60,4 +60,9 @@ task :push_shipping_lines do |t|
     FamBusinessIntel::FamAWS.new.push_shipping_lines
 end
 
+desc "push recharge customers"
+task :push_recharge_customers do |t|
+    FamBusinessIntel::FamAWS.new.push_recharge_customers
+end
+
 end

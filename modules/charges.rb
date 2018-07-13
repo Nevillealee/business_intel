@@ -1,6 +1,7 @@
 module Charges
 
   def push_all_charges
+    puts "pushing all charges task started"
 
     column_header = [
       "address_id",
@@ -121,6 +122,8 @@ module Charges
   end
 
   def push_billing_addresses
+    puts "pushing billing addresses task started"
+
     column_header = [
       "address1",
       "address2",
@@ -175,6 +178,8 @@ module Charges
   end # push_billing_addresses END
 
   def push_client_details
+    puts "pushing clent details task started"
+
     column_header = ["charge_id", "browser_ip", "user_agent"]
 
     File.delete('client_details.csv') if File.exist?('client_details.csv')
@@ -183,8 +188,6 @@ module Charges
     column_header = nil
 
     charges.each do |charge|
-      puts "charge_id: #{charge.charge_id}, browser_ip: #{charge.client_details['browser_ip']}, user_agent: #{charge.client_details['user_agent']}"
-      # puts charge.charge_id.inspect
       #Construct the CSV string
       charge_id = charge.charge_id
       browser_ip = charge.client_details['browser_ip']
@@ -199,6 +202,8 @@ module Charges
   end
 
   def push_fixed_line_items
+    puts "pushing fixed line items task started"
+
     column_header = [
       "charge_id",
       "grams",
@@ -218,7 +223,6 @@ module Charges
     column_header = nil
 
     line_items.each do |l_item|
-      puts l_item.inspect
       #Construct the CSV string
       charge_id = l_item.charge_id
       grams = l_item.grams
@@ -253,6 +257,8 @@ module Charges
   end
 
   def push_variable_line_items
+    puts "pushing variable line items task started"
+
     column_header = ["charge_id", "name", "value"]
     File.delete('variable_line_items.csv') if File.exist?('variable_line_items.csv')
     sql = "select * from charge_variable_line_items;"
@@ -261,7 +267,6 @@ module Charges
     CSV.open('variable_line_items.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
     column_header = nil
     line_items_array.each do |l_item|
-      puts l_item.inspect
       #Construct the CSV string
       charge_id = l_item['charge_id']
       name = l_item['name']
@@ -276,6 +281,8 @@ module Charges
   end
 
   def push_shipping_addresses
+    puts "pushing shipping addresses task started"
+
     column_header = [
       "charge_id",
       "address1",
@@ -296,7 +303,6 @@ module Charges
     CSV.open('shipping_addresses.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
     column_header = nil
     shipping_addresses.each do |shipping_addy|
-      puts shipping_addy.inspect
       #Construct the CSV string
       charge_id = shipping_addy['charge_id']
       address1 = shipping_addy['address1']
@@ -331,6 +337,8 @@ module Charges
   end
 
   def push_shipping_lines
+    puts "pushing shipping lines task started"
+
     column_header = [
       "charge_id",
       "code",
@@ -347,7 +355,6 @@ module Charges
     CSV.open('shipping_lines.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
     column_header = nil
     shipping_lines.each do |shipping_line|
-      puts shipping_line.inspect
       #Construct the CSV string
       charge_id = shipping_line.charge_id
       code = shipping_line.code
