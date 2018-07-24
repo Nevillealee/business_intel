@@ -154,20 +154,20 @@ module FamBusinessIntel
         # delete old file
         File.delete('skip_reasons.csv') if File.exist?('skip_reasons.csv')
         CSV.open('skip_reasons.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
-            column_header = nil
-
+        column_header = nil
         my_skip_reasons = SkipReason.all
         my_skip_reasons.each do |myreason|
             puts myreason.inspect
             customer_id = myreason.customer_id
             shopify_customer_id = myreason.shopify_customer_id
+            subscription_id = myreason.subscription_id
             charge_id = myreason.charge_id
             reason = myreason.reason
             skipped_to = myreason.skipped_to
             skip_status = myreason.skip_status
             created_at = myreason.created_at
             updated_at = myreason.updated_at
-            csv_data_out = [customer_id, shopify_customer_id, charge_id, reason, skipped_to, skip_status, created_at, updated_at ]
+            csv_data_out = [customer_id, shopify_customer_id, subscription_id, charge_id, reason, skipped_to, skip_status, created_at, updated_at ]
             hdr << csv_data_out
 
         end
@@ -190,6 +190,7 @@ module FamBusinessIntel
 
         obj = s3.bucket(bucket).object(path)
         obj.upload_file(name)
+        puts "file uploaded to s3 bucket"
     end
 
 
