@@ -39,3 +39,7 @@ class RechargeCustomer < ActiveRecord::Base
   has_many :orders, through: :subscriptions
   has_many :charges
 end
+
+class MarikaOrder < ActiveRecord::Base
+    establish_connection ENV['DB2_CONF']
+end

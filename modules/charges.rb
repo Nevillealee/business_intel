@@ -215,7 +215,8 @@ module Charges
       "subscription_id",
       "title",
       "variant_title",
-      "vendor"
+      "vendor",
+      "processed_at"
     ]
     File.delete('fixed_line_items.csv') if File.exist?('fixed_line_items.csv')
     line_items = ChargeFixedLineItems.all
@@ -235,6 +236,7 @@ module Charges
       title = l_item.title
       variant_title = l_item.variant_title
       vendor = l_item.vendor
+      processed_at = Charge.find_by(charge_id: l_item.charge_id).processed_at
 
       csv_data_out = [
         charge_id,
@@ -247,7 +249,8 @@ module Charges
         subscription_id,
         title,
         variant_title,
-        vendor
+        vendor,
+        processed_at
       ]
         hdr << csv_data_out
       end

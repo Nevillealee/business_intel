@@ -2,15 +2,18 @@ require 'aws-sdk-s3'
 require 'dotenv'
 Dotenv.load
 require 'csv'
+require 'shopify_api'
 require 'active_record'
-require "sinatra/activerecord"
-require_relative 'models/model'
+require 'sinatra/activerecord'
+require 'httparty'
+require_relative 'app/models/model'
 Dir["./modules/*.rb"].each {|file| require file }
 
 module FamBusinessIntel
     class FamAWS
       include Charges
       include Customers
+      include Marika
 
     def initialize
         @aws_key = ENV['AWS_KEY']

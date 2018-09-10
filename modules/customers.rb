@@ -23,9 +23,9 @@ module Customers
       "status",
       "synced_at"
     ]
-    File.delete('recharge_customers.csv') if File.exist?('recharge_customers.csv')
+    File.delete('ellie_recharge_customers.csv') if File.exist?('ellie_recharge_customers.csv')
     recharge_custs = RechargeCustomer.all
-    CSV.open('recharge_customers.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
+    CSV.open('ellie_recharge_customers.csv','a+', :write_headers=> true, :headers => column_header) do |hdr|
     column_header = nil
     recharge_custs.each do |cust|
       #Construct the CSV string
