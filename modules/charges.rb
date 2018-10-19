@@ -383,7 +383,7 @@ module Charges
     })
     s3 = Aws::S3::Resource.new(region: 'us-east-1')
 
-    path = "exports/etl_#{table_name}.csv"
+    path = "exports/marika/etl_#{table_name}.csv"
     #Alternate method
     #s3.bucket('fambrands-business-intelligence').object(path).upload_file('subscriptions.csv')
 
