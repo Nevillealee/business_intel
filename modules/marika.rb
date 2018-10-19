@@ -4,18 +4,20 @@ module Marika
   def pull_marika_cust
     my_url = "https://#{ENV['ACTIVE_API_KEY']}:#{ENV['ACTIVE_API_PW']}@#{ENV['ACTIVE_SHOP']}.myshopify.com/admin"
     ShopifyAPI::Base.site = my_url
-    customer_count = ShopifyAPI::Customer.count
+    my_min = "2017-01-01"
+    my_max = "2018-09-05"
+    customer_count = ShopifyAPI::Customer.count( created_at_min: my_min, created_at_max: my_max, status: 'any')
     nb_pages = (customer_count / 250.0).ceil
 
     1.upto(nb_pages) do |page|
-      my_endpoint = "https://#{ENV['ACTIVE_API_KEY']}:#{ENV['ACTIVE_API_PW']}@#{ENV['ACTIVE_SHOP']}.myshopify.com/admin/customers.json?limit=250&page=#{page}"
-      shopify_api_throttle
-      @parsed_response = HTTParty.get(my_endpoint)
-      CUSTOMER_ARRAY.push(@parsed_response['customers'])
-      p "customers set #{page}/#{nb_pages} loaded"
-      sleep 3
+      customers = ShopifyAPI::Customer.find(:all, params: {limit: 250, created_at_min: my_min, created_at_max: my_max, status: 'any', page: page})
+      customers.each do |my_customer|
+        puts my_customer.id
+        CUSTOMER_ARRAY.push(my_customer)
+      end
+      p "customers set #{page}/#{nb_pages} loaded, sleeping 8.."
+      sleep 8
     end
-    CUSTOMER_ARRAY.flatten!
     p 'customers initialized'
     return CUSTOMER_ARRAY
   end
@@ -50,26 +52,31 @@ module Marika
     column_header = nil
     marika_custs.each do |cust|
       #Construct the CSV string
-      customer_id = cust["id"]
-      accepts_marketing = cust["accepts_marketing"]
-      addresses = cust["addresses"].to_json
-      default_address = cust["default_address"].to_json
-      email = cust["email"]
-      first_name = cust["first_name"]
-      last_name = cust["last_name"]
-      last_order_id = cust["last_order_id"]
-      metafield = cust["metafield"]
-      multipass_identifier = cust["multipass_identifier"]
-      note = cust["note"]
-      orders_count = cust["orders_count"]
-      phone = cust["phone"]
-      state = cust["state"]
-      tags = cust["tags"]
-      tax_exempt = cust["tax_exempt"]
-      total_spent = cust["total_spent"]
-      verified_email = cust["verified_email"]
-      created_at = cust["created_at"]
-      updated_at = cust["updated_at"]
+      begin
+        customer_id = cust.id
+        accepts_marketing = cust.try(:accepts_marketing)
+        addresses = cust.try(:addresses).to_json
+        default_address = cust.try(:default_address).to_json
+        email = cust.try(:email)
+        first_name = cust.try(:first_name)
+        last_name = cust.try(:last_name)
+        last_order_id = cust.try(:last_order_id)
+        metafield = cust.try(:metafield)
+        multipass_identifier = cust.try(:multipass_identifier)
+        note = cust.try(:note)
+        orders_count = cust.try(:orders_count)
+        phone = cust.try(:phone)
+        state = cust.try(:state)
+        tags = cust.try(:tags)
+        tax_exempt = cust.try(:tax_exempt)
+        total_spent = cust.try(:total_spent)
+        verified_email = cust.try(:verified_email)
+        created_at = cust.try(:created_at)
+        updated_at = cust.try(:updated_at)
+      rescue StandardError => e
+        puts e
+        next
+      end
 
       csv_data_out = [
         customer_id,
