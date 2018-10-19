@@ -31,3 +31,15 @@ class ChargeFixedLineItems < ActiveRecord::Base
   belongs_to :subscription
   belongs_to :charge
 end
+
+class RechargeCustomer < ActiveRecord::Base
+  self.table_name = 'customers'
+  self.primary_key = :customer_id
+  has_many :subscriptions
+  has_many :orders, through: :subscriptions
+  has_many :charges
+end
+
+class MarikaOrder < ActiveRecord::Base
+    establish_connection ENV['DB2_CONF']
+end
