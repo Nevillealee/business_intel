@@ -8,10 +8,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-ruby 2.5.1
-bundler
-redis
-aws s3 bucket + account
+ruby 2.5.1<br/>
+bundler<br/>
+redis<br/>
+aws s3 bucket + account<br/>
 shopify store + private app w/fullaccess
 ```
 https://rvm.io/rvm/install
